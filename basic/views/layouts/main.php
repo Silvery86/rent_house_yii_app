@@ -36,23 +36,45 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
         'brandUrl' => Yii::$app->homeUrl,
         'options' => ['class' => 'navbar-expand-md navbar-dark bg-dark fixed-top']
     ]);
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav'],
-        'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
+    // echo Nav::widget([
+    //     'options' => ['class' => 'navbar-nav'],
+    //     'items' => [
+    //         ['label' => 'Home', 'url' => ['/site/index']],
+    //         ['label' => 'About', 'url' => ['/site/about']],
+    //         ['label' => 'Contact', 'url' => ['/site/contact']],
+    //         Yii::$app->user->isGuest
+    //             ? ['label' => 'Login', 'url' => ['/site/login']]
+    //             : '<li class="nav-item">'
+    //                 . Html::beginForm(['/site/logout'])
+    //                 . Html::submitButton(
+    //                     'Logout (' . Yii::$app->user->identity->username . ')',
+    //                     ['class' => 'nav-link btn btn-link logout']
+    //                 )
+    //                 . Html::endForm()
+    //                 . '</li>'
+    //     ]
+        
+    // ]);
+    $menuItems = [
+        ['label' => 'Home', 'url' => ['/site/index']],
             ['label' => 'About', 'url' => ['/site/about']],
             ['label' => 'Contact', 'url' => ['/site/contact']],
-            Yii::$app->user->isGuest
-                ? ['label' => 'Login', 'url' => ['/site/login']]
-                : '<li class="nav-item">'
-                    . Html::beginForm(['/site/logout'])
-                    . Html::submitButton(
-                        'Logout (' . Yii::$app->user->identity->username . ')',
-                        ['class' => 'nav-link btn btn-link logout']
-                    )
-                    . Html::endForm()
-                    . '</li>'
-        ]
+        // Add more menu items if needed
+    ];
+    if (!Yii::$app->user->isGuest) {
+        if (Yii::$app->user->identity->isTenant) {
+            $menuItems[] = ['label' => 'Dashboard', 'url' => ['site/tenant-dashboard']];
+        } else {
+            $menuItems[] = ['label' => 'Dashboard', 'url' => ['site/admin-dashboard']];
+        }
+        $menuItems[] = ['label' => 'Logout (' . Yii::$app->user->identity->username . ')', 'url' => ['/site/logout'], 'linkOptions' => ['data-method' => 'post']];
+    } else {
+        $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
+    }
+    
+    echo Nav::widget([
+        'options' => ['class' => 'navbar-nav navbar-right'],
+        'items' => $menuItems,
     ]);
     NavBar::end();
     ?>

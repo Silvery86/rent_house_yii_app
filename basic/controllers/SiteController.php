@@ -9,6 +9,7 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\User;
 
 class SiteController extends Controller
 {
@@ -77,7 +78,13 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+            $user = User::findByUsername($model->username);
+            Yii::$app->session->set('user', $user);
+            if ($user->isTenant) {
+                return $this->redirect(['tenant-dashboard']);
+            } else {
+                return $this->redirect(['admin-dashboard']);
+            }
         }
 
         $model->password = '';
@@ -93,6 +100,8 @@ class SiteController extends Controller
      */
     public function actionLogout()
     {
+        Yii::$app->session->remove('user'); // Remove user data from session
+
         Yii::$app->user->logout();
 
         return $this->goHome();
@@ -125,4 +134,15 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
+
+    public function actionTenantDashboard()
+    {
+        return $this->render('tenant-dashboard');
+    }
+
+    public function actionAdminDashboard()
+    {
+        return $this->render('admin-dashboard');
+    }
+
 }
