@@ -2,30 +2,72 @@
 
 namespace app\models;
 
-class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
-{
-    public $id;
-    public $username;
-    public $password;
-    public $authKey;
-    public $accessToken;
+use yii\db\ActiveRecord;
+use yii\web\IdentityInterface;
+/**
+ * This is the model class for table "user".
+ *
+ * @property int $id
+ * @property string $username
+ * @property string $password
+ * @property string|null $authKey
+ * @property string|null $accessToken
+ * @property string|null $fullname
+ * @property string|null $email
+ * @property string|null $contactNumber
+ * @property string|null $role
+ * @property int|null $isTenant
+ * @property string|null $createDate
+ * @property string|null $lastActiveDate
+ */
 
-    private static $users = [
-        '100' => [
-            'id' => '100',
-            'username' => 'admin',
-            'password' => 'admin',
-            'authKey' => 'test100key',
-            'accessToken' => '100-token',
-        ],
-        '101' => [
-            'id' => '101',
-            'username' => 'demo',
-            'password' => 'demo',
-            'authKey' => 'test101key',
-            'accessToken' => '101-token',
-        ],
-    ];
+
+
+ class User extends ActiveRecord implements IdentityInterface
+{
+    /**
+     * {@inheritdoc}
+     */
+    public static function tableName()
+    {
+        return 'user';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function rules()
+    {
+        return [
+            [['username', 'password'], 'required'],
+            [['role'], 'string'],
+            [['isTenant'], 'integer'],
+            [['createDate', 'lastActiveDate'], 'safe'],
+            [['username', 'password', 'authKey', 'accessToken', 'fullname', 'email'], 'string', 'max' => 255],
+            [['contactNumber'], 'string', 'max' => 20],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'username' => 'Username',
+            'password' => 'Password',
+            'authKey' => 'Auth Key',
+            'accessToken' => 'Access Token',
+            'fullname' => 'Fullname',
+            'email' => 'Email',
+            'contactNumber' => 'Contact Number',
+            'role' => 'Role',
+            'isTenant' => 'Is Tenant',
+            'createDate' => 'Create Date',
+            'lastActiveDate' => 'Last Active Date',
+        ];
+    }
 
 
     /**
@@ -33,7 +75,7 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
      */
     public static function findIdentity($id)
     {
-        return isset(self::$users[$id]) ? new static(self::$users[$id]) : null;
+        return static::findOne($id);
     }
 
     /**
@@ -41,13 +83,7 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        foreach (self::$users as $user) {
-            if ($user['accessToken'] === $token) {
-                return new static($user);
-            }
-        }
-
-        return null;
+        return static::findOne(['accessToken' => $token]);
     }
 
     /**
@@ -58,13 +94,7 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
      */
     public static function findByUsername($username)
     {
-        foreach (self::$users as $user) {
-            if (strcasecmp($user['username'], $username) === 0) {
-                return new static($user);
-            }
-        }
-
-        return null;
+        return static::findOne(['username' => $username]);
     }
 
     /**
