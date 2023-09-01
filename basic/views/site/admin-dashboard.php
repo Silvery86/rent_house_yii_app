@@ -1,19 +1,64 @@
 <?php
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 $user = Yii::$app->session->get('user');
 
-$this->title = 'Dashboard';
+$this->title = 'Admin Dashboard';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="dashboard">
     <h1><?= Html::encode($this->title) ?></h1>
     
-    <?php if ($user !== null): ?>
-        <p>Welcome, <?= Html::encode($user->fullname) ?></p>
-        <p>Username: <?= Html::encode($user->username) ?></p>
-        <!-- Display other user-specific information -->
-    <?php else: ?>
-        <p>User data not available in session.</p>
-    <?php endif; ?>
+    <div class="row">
+        <!-- Left Side: 3 columns width -->
+        <div class="col-md-3">
+            <?php if ($user !== null): ?>
+                <p>Welcome, <?= Html::encode($user->fullname) ?></p>
+                <div class="list-group">
+                    <a href="#" class="list-group-item" data-content="user-details">User Details</a>
+                    <a href="#" class="list-group-item" data-content="create-user">Create User</a>
+                    <a href="#" class="list-group-item" data-content="user-management">User Management</a>
+                </div>
+            <?php else: ?>
+                <p>User data not available in session.</p>
+            <?php endif; ?>
+        </div>
+        
+        <!-- Right Side: 9 columns width -->
+        <div class="col-md-9">
+            <div id="content-placeholder">
+                <!-- Content based on chosen option will be loaded here -->
+            </div>
+        </div>
+    </div>
 </div>
+
+<script>
+    // jQuery is assumed to be available for simplicity
+    $(document).ready(function() {
+        // Handle click on options
+        $(".list-group-item").click(function(e) {
+            e.preventDefault();
+            
+            var contentToLoad = $(this).data("content");
+            
+            // Load content based on chosen option
+            if (contentToLoad === "user-details") {
+                var userDetailsUrl = '<?= \yii\helpers\Url::toRoute(['site/user-details']) ?>';
+
+                $.ajax({
+                url: userDetailsUrl, // Specify the URL of the content file
+                type: 'GET',
+                success: function(data) {
+                    console.log(data);
+                    $("#content-placeholder").html(data);
+                },
+                error: function() {
+                    $("#content-placeholder").html("<p>Error loading content.</p>");
+                }
+            });
+            }
+        });
+    });
+</script>

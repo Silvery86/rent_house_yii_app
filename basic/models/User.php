@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use Yii;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 /**
@@ -130,5 +131,17 @@ use yii\web\IdentityInterface;
     public function validatePassword($password)
     {
         return $this->password === $password;
+    }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if ($this->isNewRecord) {
+                $this->authKey = Yii::$app->security->generateRandomString();
+                $this->accessToken = Yii::$app->security->generateRandomString();
+            }
+            return true;
+        }
+        return false;
     }
 }

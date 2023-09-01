@@ -23,6 +23,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>" class="h-100">
 <head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
 </head>
@@ -36,31 +37,14 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
         'brandUrl' => Yii::$app->homeUrl,
         'options' => ['class' => 'navbar-expand-md navbar-dark bg-dark fixed-top']
     ]);
-    // echo Nav::widget([
-    //     'options' => ['class' => 'navbar-nav'],
-    //     'items' => [
-    //         ['label' => 'Home', 'url' => ['/site/index']],
-    //         ['label' => 'About', 'url' => ['/site/about']],
-    //         ['label' => 'Contact', 'url' => ['/site/contact']],
-    //         Yii::$app->user->isGuest
-    //             ? ['label' => 'Login', 'url' => ['/site/login']]
-    //             : '<li class="nav-item">'
-    //                 . Html::beginForm(['/site/logout'])
-    //                 . Html::submitButton(
-    //                     'Logout (' . Yii::$app->user->identity->username . ')',
-    //                     ['class' => 'nav-link btn btn-link logout']
-    //                 )
-    //                 . Html::endForm()
-    //                 . '</li>'
-    //     ]
-        
-    // ]);
+    
     $menuItems = [
         ['label' => 'Home', 'url' => ['/site/index']],
             ['label' => 'About', 'url' => ['/site/about']],
             ['label' => 'Contact', 'url' => ['/site/contact']],
         // Add more menu items if needed
     ];
+    
     if (!Yii::$app->user->isGuest) {
         if (Yii::$app->user->identity->isTenant) {
             $menuItems[] = ['label' => 'Dashboard', 'url' => ['site/tenant-dashboard']];
@@ -93,8 +77,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 <footer id="footer" class="mt-auto py-3 bg-light">
     <div class="container">
         <div class="row text-muted">
-            <div class="col-md-6 text-center text-md-start">&copy; My Company <?= date('Y') ?></div>
-            <div class="col-md-6 text-center text-md-end"><?= Yii::powered() ?></div>
+            <div class="col-md-6 text-center text-md-start">&copy; Copyright <?= date('Y') ?></div>
         </div>
     </div>
 </footer>

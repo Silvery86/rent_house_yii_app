@@ -6,6 +6,8 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
+use yii\web\ForbiddenHttpException;
+use yii\web\UnauthorizedHttpException;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
@@ -27,6 +29,16 @@ class SiteController extends Controller
                         'actions' => ['logout'],
                         'allow' => true,
                         'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['admin-dashboard'],
+                        'allow' => true,
+                        'roles' => ['admin', 'manager'],
+                    ],
+                    [
+                        'actions' => ['create-account'],
+                        'allow' => true,
+                        'roles' => ['admin'],
                     ],
                 ],
             ],
@@ -65,6 +77,56 @@ class SiteController extends Controller
         return $this->render('index');
     }
 
+    /**
+     * Displays contact page.
+     *
+     */
+    public function actionContact()
+    {
+        $model = new ContactForm();
+        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
+            Yii::$app->session->setFlash('contactFormSubmitted');
+
+            return $this->refresh();
+        }
+        return $this->render('contact', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Displays about page.
+     *
+     * @return string
+     */
+    public function actionAbout()
+    {
+        return $this->render('about');
+    }
+
+     /**
+     * Displays tenant dashboard.
+     *
+     */
+    public function actionTenantDashboard()
+    {
+        return $this->render('tenant-dashboard');
+    }
+     /**
+     * Displays admin - manager dashboard.
+     *
+     */
+
+     public function actionAdminDashboard()
+     {
+         return $this->render('admin-dashboard');
+     }
+
+    
+    public function actionCreateAccount()
+    {
+        return $this->render('create-account');
+    }
     /**
      * Login action.
      *
@@ -112,37 +174,36 @@ class SiteController extends Controller
      *
      * @return Response|string
      */
-    public function actionContact()
-    {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
+    
+     public function actionUserDetails()
+        {   
+            $user = Yii::$app->session->get('user');
+            return $this->renderAjax('user-details', ['user' => $user]); // Render the user-details.php view
         }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
-    }
+    
 
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
-    public function actionAbout()
-    {
-        return $this->render('about');
-    }
-
-    public function actionTenantDashboard()
-    {
-        return $this->render('tenant-dashboard');
-    }
-
-    public function actionAdminDashboard()
-    {
-        return $this->render('admin-dashboard');
-    }
+    //  public function beforeAction($action)
+    //  {
+    //      // Your existing code
+    //      if ($action->id === 'create-account' && !Yii::$app->user->can('admin')) {
+    //          throw new ForbiddenHttpException('You are not authorized to perform this action.');
+    //      }
+     
+    //      // Get the user's access token from the request headers
+    //      $accessToken = Yii::$app->request->headers->get('Authorization');
+     
+    //       // Validate access token and log in user
+    //      $user = User::findOne(['accessToken' => $accessToken]);
+     
+    //      if ($user) {
+    //          // The user is authenticated, proceed with the action
+    //          Yii::$app->user->login($user);
+    //      } else {
+    //          throw new UnauthorizedHttpException('You are not authorized to access this resource.');
+    //      }
+     
+    //      // Continue with the parent's beforeAction()
+    //      return parent::beforeAction($action);
+    //  }
 
 }
