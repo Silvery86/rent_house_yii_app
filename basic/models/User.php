@@ -40,12 +40,13 @@ use yii\web\IdentityInterface;
     public function rules()
     {
         return [
-            [['username', 'password'], 'required'],
-            [['role'], 'string'],
-            [['isTenant'], 'integer'],
-            [['createDate', 'lastActiveDate'], 'safe'],
-            [['username', 'password', 'authKey', 'accessToken', 'fullname', 'email'], 'string', 'max' => 255],
-            [['contactNumber'], 'string', 'max' => 20],
+            [['username', 'password', 'role', 'fullname', 'email', 'contactNumber'], 'required'],
+            [['isTenant'], 'boolean'],
+            [['createDate', 'lastActiveDate'], 'safe'], // Adjust the rules for date fields as needed
+            [['username'], 'unique'],
+            [['email'], 'email'],
+            [['contactNumber'], 'match', 'pattern' => '/^[0-9]{10}$/'],
+            [['authKey', 'accessToken'], 'safe'], // Adjust the rules for these fields as needed
         ];
     }
 

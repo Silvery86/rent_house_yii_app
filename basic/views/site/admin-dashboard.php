@@ -8,23 +8,28 @@ $this->title = 'Admin Dashboard';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="dashboard">
-    <h1><?= Html::encode($this->title) ?></h1>
-    
+    <h1>
+        <?= Html::encode($this->title) ?>
+    </h1>
+
     <div class="row">
         <!-- Left Side: 3 columns width -->
         <div class="col-md-3">
             <?php if ($user !== null): ?>
-                <p>Welcome, <?= Html::encode($user->fullname) ?></p>
+                <p>Welcome,
+                    <?= Html::encode($user->fullname) ?>
+                </p>
                 <div class="list-group">
                     <a href="#" class="list-group-item" data-content="user-details">User Details</a>
-                    <a href="#" class="list-group-item" data-content="create-user">Create User</a>
-                    <a href="#" class="list-group-item" data-content="user-management">User Management</a>
+                    <?php if (Yii::$app->user->can('admin')): ?>
+                        <a href="#" class="list-group-item" data-content="index">User Management</a>
+                    <?php endif; ?>
                 </div>
             <?php else: ?>
                 <p>User data not available in session.</p>
             <?php endif; ?>
         </div>
-        
+
         <!-- Right Side: 9 columns width -->
         <div class="col-md-9">
             <div id="content-placeholder">
@@ -36,29 +41,45 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <script>
     // jQuery is assumed to be available for simplicity
-    $(document).ready(function() {
+    $(document).ready(function () {
         // Handle click on options
-        $(".list-group-item").click(function(e) {
+        $(".list-group-item").click(function (e) {
             e.preventDefault();
-            
+
             var contentToLoad = $(this).data("content");
-            
+
             // Load content based on chosen option
             if (contentToLoad === "user-details") {
-                var userDetailsUrl = '<?= \yii\helpers\Url::toRoute(['site/user-details']) ?>';
+                var userDetailsUrl = '<?= \yii\helpers\Url::toRoute(['dashboard/user-details']) ?>';
 
                 $.ajax({
-                url: userDetailsUrl, // Specify the URL of the content file
-                type: 'GET',
-                success: function(data) {
-                    console.log(data);
-                    $("#content-placeholder").html(data);
-                },
-                error: function() {
-                    $("#content-placeholder").html("<p>Error loading content.</p>");
-                }
-            });
+                    url: userDetailsUrl, // Specify the URL of the content file
+                    type: 'GET',
+                    success: function (data) {
+                        console.log(data);
+                        $("#content-placeholder").html(data);
+                    },
+                    error: function () {
+                        $("#content-placeholder").html("<p>Error loading content.</p>");
+                    }
+                });
             }
+
+            if (contentToLoad === "index") {
+                var userDetailsUrl = '<?= \yii\helpers\Url::toRoute(['dashboard/index']) ?>';
+                $.ajax({
+                    url: userDetailsUrl, // Specify the URL of the content file
+                    type: 'GET',
+                    success: function (data) {
+                        console.log(data);
+                        $("#content-placeholder").html(data);
+                    },
+                    error: function () {
+                        $("#content-placeholder").html("<p>Error loading content.</p>");
+                    }
+                });
+            }
+
         });
     });
 </script>

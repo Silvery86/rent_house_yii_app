@@ -169,17 +169,8 @@ class SiteController extends Controller
         return $this->goHome();
     }
 
-    /**
-     * Displays contact page.
-     *
-     * @return Response|string
-     */
     
-     public function actionUserDetails()
-        {   
-            $user = Yii::$app->session->get('user');
-            return $this->renderAjax('user-details', ['user' => $user]); // Render the user-details.php view
-        }
+     
     
 
     //  public function beforeAction($action)

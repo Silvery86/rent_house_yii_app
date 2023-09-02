@@ -33,13 +33,14 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 <header id="header">
     <?php
     NavBar::begin([
-        'brandLabel' => Yii::$app->name,
+        'brandLabel' => 'Rent House',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => ['class' => 'navbar-expand-md navbar-dark bg-dark fixed-top']
     ]);
     
     $menuItems = [
         ['label' => 'Home', 'url' => ['/site/index']],
+        
             ['label' => 'About', 'url' => ['/site/about']],
             ['label' => 'Contact', 'url' => ['/site/contact']],
         // Add more menu items if needed
@@ -49,7 +50,9 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
         if (Yii::$app->user->identity->isTenant) {
             $menuItems[] = ['label' => 'Dashboard', 'url' => ['site/tenant-dashboard']];
         } else {
+            $menuItems[] = ['label' => 'Property', 'url' => ['property/index']];
             $menuItems[] = ['label' => 'Dashboard', 'url' => ['site/admin-dashboard']];
+            
         }
         $menuItems[] = ['label' => 'Logout (' . Yii::$app->user->identity->username . ')', 'url' => ['/site/logout'], 'linkOptions' => ['data-method' => 'post']];
     } else {

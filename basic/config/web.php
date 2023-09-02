@@ -50,8 +50,10 @@ $config = [
                 'site/user-details' => 'site/user-details',
             ],
         ],
+      
         
     ],
+   
     'params' => $params,
 ];
 
