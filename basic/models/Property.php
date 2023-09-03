@@ -17,11 +17,13 @@ use Yii;
  * @property float|null $deposit
  * @property string|null $availabilityStatus
  * @property string|null $propertyType
- *
+
  * @property Picture[] $pictures
  */
 class Property extends \yii\db\ActiveRecord
 {
+    public $imageFile;
+  
     /**
      * {@inheritdoc}
      */
@@ -43,6 +45,7 @@ class Property extends \yii\db\ActiveRecord
             [['availabilityStatus'], 'string', 'max' => 20],
             [['propertyType'], 'string', 'max' => 50],
             [['propertyID'], 'unique'],
+            [['imageFile'], 'file', 'extensions' => 'png, jpg, jpeg'],
         ];
     }
 
@@ -62,6 +65,7 @@ class Property extends \yii\db\ActiveRecord
             'deposit' => 'Deposit',
             'availabilityStatus' => 'Availability Status',
             'propertyType' => 'Property Type',
+            'imageFile' => 'Image File',
         ];
     }
 
@@ -74,4 +78,6 @@ class Property extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Picture::class, ['propertyID' => 'propertyID']);
     }
+
+    
 }

@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Property;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -74,7 +75,16 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        
+        $availableProperty = Property::find()
+    ->where(['availabilityStatus' => 'vacant'])
+    ->joinWith('pictures') // Assuming 'pictures' is the name of the relation in your Property model
+    ->all();
+       
+        
+        return $this->render('index',[
+            'availableProperty' => $availableProperty,
+        ]);
     }
 
     /**

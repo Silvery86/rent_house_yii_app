@@ -29,16 +29,31 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'propertyID',
+            //'propertyID',
             'address',
             'bedrooms',
             'bathrooms',
             'squareFootage',
-            //'amenities',
-            //'monthlyRent',
-            //'deposit',
-            //'availabilityStatus',
-            //'propertyType',
+            'amenities',
+            'monthlyRent',
+            'deposit',
+            'availabilityStatus',
+            [
+                'label' => 'Picture',
+                'value' => function ($model) {
+                    $pictures = $model->getPictures()->all(); // Assuming the pictures relation is named "pictures"
+                    if (!empty($pictures)) {
+                        $firstPicture = $pictures[0] -> imageURL;
+                        $imageUrl = Yii::getAlias('@web/uploads/') . $firstPicture;
+                        
+                        return Html::a(Html::img($imageUrl, ['width' => '100']), $imageUrl, ['target' => '_blank']);
+                    } else {
+                        return 'No pictures available';
+                    }
+                },
+                'format' => 'raw',
+            ],
+            'propertyType',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Property $model, $key, $index, $column) {

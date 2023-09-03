@@ -26,7 +26,8 @@ $this->params['breadcrumbs'][] = $this->title;
         ]) ?>
     </p>
 
-    <?= DetailView::widget([
+    <?= DetailView::widget(
+        [
         'model' => $model,
         'attributes' => [
             'id',
@@ -40,8 +41,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'role',
             'isTenant',
             'createDate',
-            'lastActiveDate',
+            'lastActiveDate',    
+            ],
         ],
-    ]) ?>
+        
+    ) ?>
 
 </div>

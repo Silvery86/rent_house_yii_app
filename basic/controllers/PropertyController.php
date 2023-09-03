@@ -2,11 +2,14 @@
 
 namespace app\controllers;
 
+use app\models\Picture;
+use Yii;
 use app\models\Property;
 use app\models\PropertySearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * PropertyController implements the CRUD actions for Property model.
@@ -55,8 +58,13 @@ class PropertyController extends Controller
      */
     public function actionView($propertyID)
     {
+
+        $model = $this->findModel($propertyID);
+
+
         return $this->render('view', [
-            'model' => $this->findModel($propertyID),
+            'model' => $model,
+
         ]);
     }
 
@@ -92,9 +100,47 @@ class PropertyController extends Controller
     public function actionUpdate($propertyID)
     {
         $model = $this->findModel($propertyID);
+        $pictures = new Picture;
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'propertyID' => $model->propertyID]);
+        if ($this->request->isPost) {
+            $model->load($this->request->post());
+
+            // Handle the uploaded image
+            $model->imageFile = UploadedFile::getInstance($model, 'imageFile'); // Assuming 'imageFile' is the name of the file input in your form
+            
+            if ($model->validate()) {
+                if ($model->imageFile) {
+            // Rename the image file
+            $imageName = $model->propertyID . '_' . Yii::$app->security->generateRandomString(8) . '.' . $model->imageFile->extension;
+            
+            // Save the image to the uploads folder
+            
+            
+            // Update the model with the image URL and caption
+            
+           
+            // Set the model's pictureID attribute
+            
+            $pictures->propertyID = $propertyID;
+            $pictures->imageURL = $imageName;
+            $pictures->caption = $imageName;
+            if ($pictures->save()) {
+                // Record saved successfully
+            } else {
+                // Handle validation errors
+                $errors = $pictures->errors;
+                // Log or display the errors
+                Yii::error($errors);
+                echo '<pre>';
+                var_dump($errors);
+                die();
+            }
+            }
+                if ($model->save()) {
+                    $model->imageFile->saveAs(Yii::getAlias('@app/web/uploads/') . $imageName);
+                    return $this->redirect(['view', 'propertyID' => $model->propertyID]);
+                }
+            }
         }
 
         return $this->render('update', [
